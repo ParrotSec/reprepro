@@ -1,0 +1,31 @@
+Description: Accept MD5 Mismatch
+ When importing rebuilded content from build.parrotsec.org with same version,
+ accept it as is ignoring the md5 mismatch and keep the old file unless
+ a new version is actually ready.
+ .
+ reprepro (5.3.0-1parrot1) lts; urgency=medium
+ .
+   * use RET_NOTHING when same file with different md5sum is detected.
+Author: Lorenzo "Palinuro" Faletra <palinuro@parrotsec.org>
+Last-Update: 2019-08-02
+
+--- reprepro-5.3.0.orig/files.c
++++ reprepro-5.3.0/files.c
+@@ -137,7 +137,7 @@ retvalue files_canadd(const char *fileke
+ 				filekey);
+ 		checksums_printdifferences(stderr, indatabase, checksums);
+ 		checksums_free(indatabase);
+-		return RET_ERROR_WRONG_MD5;
++		return RET_NOTHING;
+ 
+ 	}
+ 	// TODO: sometimes the caller might want to have additional
+@@ -242,7 +242,7 @@ static inline retvalue checkorimprove(co
+ "File \"%s\" is already registered with different checksums!\n",
+ 				filekey);
+ 		checksums_printdifferences(stderr, indatabase, checksums);
+-		r = RET_ERROR_WRONG_MD5;
++		r = RET_NOTHING;
+ 	} else if (improves) {
+ 		r = checksums_combine(checksums_p, indatabase, NULL);
+ 	} else
